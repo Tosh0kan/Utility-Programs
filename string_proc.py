@@ -16,7 +16,6 @@ def meme_string(string: str) -> str:
             cnt += 1
     return ''.join(split_str)
 
-
 def fullwidth(string: str) -> str|None:
     split_str = [e for e in string]
 
@@ -36,7 +35,6 @@ def fullwidth(string: str) -> str|None:
         print(f'The <{err}> character is not supported. Only unnacented letters, digits, punctuation, '
               'and the special characters \', \", #, $, %, &, ), (, *, /, +, -, are allowed.')
         quit()
-
 
 def goddess_format(string: str) -> str:
     CAPITAL_PRONOUNS = ('you', 'you\'re', 'your', 'yours')
