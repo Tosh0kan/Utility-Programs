@@ -6,18 +6,28 @@ from PIL import Image
 from pathlib import Path
 
 def img_convert(path_outer: str, fmt: str) -> Image:
-    def file_convert(path_inner: str, fmt: str) -> Image:
-        icon = Image.open(r"{}".format(path_inner)).convert("RGB")
-        icon.save(r"{}.{}".format(path_inner.split('.')[0], fmt), format=f"{fmt.upper()}")
+    def file_convert(path_inner: str, fmt: str, batch: bool = False) -> Image:
+        if not batch:
+            icon = Image.open(r"{}".format(path_inner)).convert("RGB")
+            icon.save(r"{}.{}".format(path_inner.split('.')[0], fmt), format=f"{fmt.upper()}")
+        elif batch:
+            converted_folder = '\\'.join(path_inner.split('\\')[0:-1]) + '\\converted'
+            img_name = path_inner.split('\\')[-1].split('.')[0]
+            icon = Image.open(r"{}".format(path_inner)).convert("RGB")
+            icon.save(r"{}.{}".format(converted_folder  + '\\' + img_name, fmt), format=f"{fmt.upper()}")
 
-    print(path_outer)
     if Path(path_outer).is_file():
         file_convert(path_outer, fmt)
 
     elif Path(path_outer).is_dir():
         dir_ls = os.listdir(path_outer)
         file_list = [path_outer + '\\' + e for e in dir_ls]
-        pp(file_list)
+        try:
+            os.mkdir(path_outer + '\\' + 'converted')
+        except FileExistsError:
+            pass
+        for e in file_list:
+            file_convert(e, 'png', batch=True)
 
 def main():
     parser = argparse.ArgumentParser()
