@@ -4,6 +4,7 @@ import pillow_avif
 from pprint import pp
 from PIL import Image
 from pathlib import Path
+from datetime import datetime as dt
 
 def img_convert(path_outer: str, fmt: str) -> Image:
     def file_convert(path_inner: str, fmt: str, batch: bool = False) -> Image:
@@ -26,8 +27,14 @@ def img_convert(path_outer: str, fmt: str) -> Image:
             os.mkdir(path_outer + '\\' + 'converted')
         except FileExistsError:
             pass
+        total_files = len(file_list)
+        file_no = 1
+        start = dt.now()
         for e in file_list:
             file_convert(e, 'png', batch=True)
+            print(f"Saved file {file_no}/{total_files}")
+            file_no += 1
+        print(f"Total time to convert: {dt.now() - start}")
 
 def main():
     parser = argparse.ArgumentParser()
