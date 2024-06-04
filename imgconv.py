@@ -1,11 +1,12 @@
 import os
+import asyncio
 import argparse
 import pillow_avif
 from PIL import Image
 from pathlib import Path
 from datetime import datetime as dt
 
-def img_convert(path_outer: str, fmt: str) -> Image:
+async def img_convert(path_outer: str, fmt: str) -> Image:
     def file_convert(path_inner: str, fmt: str, batch: bool = False) -> Image:
         if not batch:
             icon = Image.open(r"{}".format(path_inner)).convert("RGB")
@@ -26,23 +27,16 @@ def img_convert(path_outer: str, fmt: str) -> Image:
             os.mkdir(path_outer + '\\' + 'converted')
         except FileExistsError:
             pass
-        total_files = len(file_list)
-        file_no = 1
         start = dt.now()
-        for e in file_list:
-            file_convert(e, 'png', batch=True)
-            print(f"Saved file {file_no}/{total_files}")
-            file_no += 1
+        # tasks = (file_convert(e, 'png', batch=True) for e in file_list)
+        await asyncio.gather(*(asyncio.to_thread(file_convert, e, 'png', batch=True) for e in file_list))
         print(f"Total time to convert: {dt.now() - start}")
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-p", help="Input file or folder path", default=os.getcwd())
     parser.add_argument("-f", help="Output file/files format")
     args = parser.parse_args()
-    img_convert(args.p, args.f)
-
-
+    asyncio.run(img_convert(args.p, args.f))
 if __name__ == "__main__":
     pillow_avif
     main()
