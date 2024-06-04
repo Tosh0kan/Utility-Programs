@@ -1,7 +1,6 @@
 import os
 import argparse
 import pillow_avif
-from pprint import pp
 from PIL import Image
 from pathlib import Path
 from datetime import datetime as dt
