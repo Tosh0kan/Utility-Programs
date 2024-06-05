@@ -21,8 +21,6 @@ async def img_convert(path_outer: str, fmt: str) -> Image:
 
     elif Path(path_outer).is_dir():
         dir_ls = os.listdir(path_outer)
-
-        global file_list
         file_list = [path_outer + '\\' + e for e in dir_ls]
 
         try:
@@ -30,7 +28,7 @@ async def img_convert(path_outer: str, fmt: str) -> Image:
         except FileExistsError:
             pass
         start = dt.now()
-        await asyncio.gather(*(asyncio.to_thread(file_convert, i, e, 'png')
+        await asyncio.gather(*(asyncio.to_thread(file_convert, i, e, fmt)
                                for i, e in enumerate(file_list, start=1)))
         print(f"Total time to convert: {dt.now() - start}")
 
