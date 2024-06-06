@@ -40,7 +40,7 @@ async def img_convert(path_outer: str, fmt: str, async_flag: bool = False) -> Im
 
         elif not async_flag:
             print("Boost mode is off. With it on, it's faster but very CPU intesive. "
-                  "Activate it by adding the -a or --async option. To learn more, pass -h or --help.")
+                  "Activate it by adding the -b or --boost option. To learn more, pass -h or --help.")
             dir_ls = os.listdir(path_outer)
             file_list = [path_outer + '\\' + e for e in dir_ls]
 
