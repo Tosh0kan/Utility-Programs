@@ -14,8 +14,8 @@ async def img_convert(path_outer: str, fmt: str, async_flag: bool = False) -> Im
             icon = Image.open(r"{}".format(path_inner)).convert("RGB")
             icon.save(r"{}.{}".format(path_inner.split('.')[0], fmt), format=f"{fmt.upper()}")
         elif batch:
-            converted_folder = '\\'.join(path_inner.split('\\')[0:-1]) + '\\converted'
-            img_name = path_inner.split('\\')[-1].split('.')[0]
+            converted_folder = (path_inner.replace(os.path.basename(path_inner), '')) + 'converted'
+            img_name = os.path.basename(path_inner).split('.')[0]
             icon = Image.open(r"{}".format(path_inner)).convert("RGB")
             icon.save(r"{}.{}".format(converted_folder  + '\\' + img_name, fmt), format=f"{fmt.upper()}")
             print(f"Saved file {count}/{len(file_list)}")
@@ -49,7 +49,7 @@ async def img_convert(path_outer: str, fmt: str, async_flag: bool = False) -> Im
             except FileExistsError:
                 pass
             start = dt.now()
-            for i, e in enumerate(file_list):
+            for i, e in enumerate(file_list, start=1):
                 file_convert(e, fmt, batch=True, count=i)
 
             print(f"Total time to convert: {dt.now() - start}.")
@@ -62,7 +62,7 @@ def main():
     parser.add_argument("-f", "--format", help="Output file/files format")
     parser.add_argument("-b", "--boost", help="Enables asynchronous execution when given a folder path."
                         "Extremely fast but extremely CPU intensive. Default is OFF.",
-                        default=False)
+                        default=False, action="store_true")
     args = parser.parse_args()
     asyncio.run(img_convert(args.path, args.format, args.boost))
 if __name__ == "__main__":
