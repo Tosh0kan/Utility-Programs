@@ -11,14 +11,14 @@ from datetime import datetime as dt
 async def img_convert(path_outer: str, fmt: str, async_flag: bool = False) -> Image:
     def file_convert(path_inner: str, fmt: str, batch: bool = False, count: int = 0) -> Image:
         if not batch:
-            icon = Image.open(r"{}".format(path_inner)).convert("RGB")
-            icon.save(r"{}.{}".format(path_inner.split('.')[0], fmt), format=f"{fmt.upper()}")
+            with Image.open(r"{}".format(path_inner)).convert("RGB") as icon:
+                icon.save(r"{}.{}".format(path_inner.split('.')[0], fmt), format=f"{fmt.upper()}")
         elif batch:
             converted_folder = (path_inner.replace(os.path.basename(path_inner), '')) + 'converted'
             img_name = os.path.basename(path_inner).split('.')[0]
-            icon = Image.open(r"{}".format(path_inner)).convert("RGB")
-            icon.save(r"{}.{}".format(converted_folder  + '\\' + img_name, fmt), format=f"{fmt.upper()}")
-            print(f"Saved file {count}/{len(file_list)}")
+            with Image.open(r"{}".format(path_inner)).convert("RGB") as icon:
+                icon.save(r"{}.{}".format(converted_folder  + '\\' + img_name, fmt), format=f"{fmt.upper()}")
+                print(f"Saved file {count}/{len(file_list)}")
 
 
     if Path(path_outer).is_file():
