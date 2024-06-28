@@ -7,7 +7,6 @@ from pathlib import Path
 from datetime import datetime as dt
 
 
-
 async def img_convert(path_outer: str, fmt: str, async_flag: bool = False) -> Image:
     def file_convert(path_inner: str, fmt: str, batch: bool = False, count: int = 0) -> Image:
         if not batch:
@@ -57,7 +56,7 @@ async def img_convert(path_outer: str, fmt: str, async_flag: bool = False) -> Im
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-p", "--path", help="Input file or folder path with serveral images to conver.",
+    parser.add_argument("-p", "--path", help="Input file or folder path with serveral images to convert.",
                         default=os.getcwd())
     parser.add_argument("-f", "--format", help="Output file/files format")
     parser.add_argument("-b", "--boost", help="Enables asynchronous execution when given a folder path."
