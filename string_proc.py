@@ -37,7 +37,7 @@ def fullwidth(string: str) -> str|None:
         quit()
 
 def goddess_format(string: str) -> str:
-    CAPITAL_PRONOUNS = ('you', 'you\'re', 'your', 'yours')
+    CAPITAL_PRONOUNS = ('you', 'you\'re', 'your', 'yours', 'yourself')
     str_list = string.split(' ')
 
     cnt = 0
@@ -47,6 +47,9 @@ def goddess_format(string: str) -> str:
         cnt += 1
 
     return ' '.join(str_list)
+
+def diff_check(string_1: str, string_2: str) -> str:
+    pass
 
 def main():
     parser = argparse.ArgumentParser()
