@@ -37,14 +37,18 @@ def fullwidth(string: str) -> str|None:
         quit()
 
 def goddess_format(string: str) -> str:
-    CAPITAL_PRONOUNS = ('you', 'you\'re', 'your', 'yours', 'yourself')
+    CAPITAL_PRONOUNS = {'you': 'You',
+                        'you\'re': 'You\'re',
+                        'your': 'Your',
+                        'yours': 'Yours',
+                        'yourself': 'Yourself'}
     str_list = string.split(' ')
 
-    cnt = 0
-    for e in str_list:
-        if e in CAPITAL_PRONOUNS:
-            str_list[cnt] = e.title()
-        cnt += 1
+    for n, e in enumerate(str_list):
+        try:
+            str_list[n] = CAPITAL_PRONOUNS[e]
+        except KeyError:
+            continue
 
     return ' '.join(str_list)
 
