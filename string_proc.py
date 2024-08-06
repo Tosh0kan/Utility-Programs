@@ -58,7 +58,7 @@ def snowflake_format(lid: int) -> dt.datetime:
     d_epoch = int(bin_id[0:42], 2)
     u_epoch = d_epoch + 1420070400000
 
-    return dt.datetime.fromtimestamp(u_epoch)
+    return dt.datetime.fromtimestamp(u_epoch/1000)
 
 def main():
     parser = argparse.ArgumentParser()
@@ -91,9 +91,9 @@ def main():
         goddess_formatted = goddess_format(args.goddess_format)
         pyperclip.copy(goddess_formatted)
         print("Result sent to clipboard!")
-    elif args.snowflake_format is not None:
-        timestamp = snowflake_format(args.snowflake_format)
-        pyperclip.copy(timestamp)
+    elif args.snowflake_timestamp is not None:
+        timestamp = snowflake_format(args.snowflake_timestamp)
+        pyperclip.copy(dt.datetime.strftime(timestamp, "%Y-%m-%d %H:%M:%S.%f"))
         print(timestamp)
 
 if __name__ == '__main__':
