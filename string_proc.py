@@ -1,6 +1,7 @@
 import random
 import argparse
 import pyperclip
+import datetime as dt
 
 def meme_string(string: str) -> str:
     split_str = [e for e in string]
@@ -52,8 +53,12 @@ def goddess_format(string: str) -> str:
 
     return ' '.join(str_list)
 
-def diff_check(string_1: str, string_2: str) -> str:
-    pass
+def snowflake_format(lid: int) -> dt.datetime:
+    bin_id = format(lid, "#066b")[2:]
+    d_epoch = int(bin_id[0:42], 2)
+    u_epoch = d_epoch + 1420070400000
+
+    return dt.datetime.fromtimestamp(u_epoch)
 
 def main():
     parser = argparse.ArgumentParser()
@@ -65,7 +70,9 @@ def main():
                         help='Converts the text to its fullwidth version. '
                         'Supports letters, digits and SOME special characters')
     parser.add_argument('-goddess', '--goddess-format', type=str, default=None,
-                        help='capitalizes the appropriate pronouns')
+                        help='Capitalizes the appropriate pronouns')
+    parser.add_argument('-s', '--snowflake-timestamp', type=int, default=None,
+                        help='Formats snowflake IDs, like a Discord message ID to its timestamp.')
 
     args = parser.parse_args()
     if args.meme_text is not None:
@@ -84,6 +91,10 @@ def main():
         goddess_formatted = goddess_format(args.goddess_format)
         pyperclip.copy(goddess_formatted)
         print("Result sent to clipboard!")
+    elif args.snowflake_format is not None:
+        timestamp = snowflake_format(args.snowflake_format)
+        pyperclip.copy(timestamp)
+        print(timestamp)
 
 if __name__ == '__main__':
     main()
