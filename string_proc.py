@@ -53,12 +53,20 @@ def goddess_format(string: str) -> str:
 
     return ' '.join(str_list)
 
-def snowflake_format(lid: int) -> dt.datetime:
+def snowflake_format(lid: int) -> str:
     bin_id = format(lid, "#066b")[2:]
     d_epoch = int(bin_id[0:42], 2)
     u_epoch = d_epoch + 1420070400000
+    dt_epoch =  dt.datetime.fromtimestamp(u_epoch/1000)
+    dt_str = dt.datetime.strftime(dt_epoch, "%Y-%m-%d %H:%M:%S.%f")
 
-    return dt.datetime.fromtimestamp(u_epoch/1000)
+    to_proc = list(dt_str.split('.')[1])
+    while to_proc[-1] == '0':
+        to_proc.pop(-1)
+    to_proc = ''.join(to_proc)
+    dt_str = dt_str.split('.')[0] + '.' + to_proc
+
+    return dt_str
 
 def main():
     parser = argparse.ArgumentParser()
@@ -93,7 +101,7 @@ def main():
         print("Result sent to clipboard!")
     elif args.snowflake_timestamp is not None:
         timestamp = snowflake_format(args.snowflake_timestamp)
-        pyperclip.copy(dt.datetime.strftime(timestamp, "%Y-%m-%d %H:%M:%S.%f"))
+        pyperclip.copy(timestamp)
         print(timestamp)
 
 if __name__ == '__main__':
