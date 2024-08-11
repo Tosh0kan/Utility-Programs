@@ -38,11 +38,11 @@ def fullwidth(string: str) -> str|None:
         quit()
 
 def goddess_format(string: str) -> str:
-    CAPITAL_PRONOUNS = {'you': 'You',
-                        'you\'re': 'You\'re',
-                        'your': 'Your',
-                        'yours': 'Yours',
-                        'yourself': 'Yourself'}
+    CAPITAL_PRONOUNS = {'you': 'You', 'you\'re': 'You\'re', 'your': 'Your',
+                        'yours': 'Yours', 'yourself': 'Yourself', 'goddess': 'Goddess',
+                        'her': 'Her', 'herself': 'Herself', 'she': 'She', 'min': 'Min',
+                        'juu': 'Juu'
+                        }
     str_list = string.split(' ')
 
     for n, e in enumerate(str_list):
@@ -98,7 +98,7 @@ def main():
     elif args.goddess_format is not None:
         goddess_formatted = goddess_format(args.goddess_format)
         pyperclip.copy(goddess_formatted)
-        print("Result sent to clipboard!")
+        print(f"<{goddess_formatted}> sent to clipboard!")
     elif args.snowflake_timestamp is not None:
         timestamp = snowflake_format(args.snowflake_timestamp)
         pyperclip.copy(timestamp)
