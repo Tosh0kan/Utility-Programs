@@ -41,7 +41,7 @@ async def scrape_and_proc():
         tasks = (client.get(url, headers=headers, timeout=timeout) for url in all_urls)
         reqs = await asyncio.gather(*tasks)
 
-    pages_texts = [bs(page.text, 'lxml').find('div', class_='panel article aa_eQ').prettify() for page in reqs]
+    pages_texts = [bs(page.text, 'lxml').find('div', class_='aa_ht').prettify() for page in reqs]
     text_body = ''.join(pages_texts)
 
     return text_body, story_title
