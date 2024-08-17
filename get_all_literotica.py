@@ -4,7 +4,9 @@ import argparse
 from bs4 import BeautifulSoup as bs
 
 
-async def scrape_and_proc(url: str, path: str, custom_title: str = None, title_add: str = None) -> None:
+async def scrape_and_proc(url: str, path: str, custom_title: str = None,
+                          prefix: str = None, sufix: str = None) -> None:
+
     def title_legality(story_title: str) -> str:
         FORBIDDEN_CHARACTERS = (
         '/',
@@ -71,8 +73,12 @@ async def scrape_and_proc(url: str, path: str, custom_title: str = None, title_a
     else:
         pass
 
-    if title_add is not None:
-        story_title = title_add + ' ' + story_title
+    if prefix is not None:
+        story_title = prefix + ' ' + story_title
+    elif sufix is not None:
+        story_title = story_title + ' ' + sufix
+    elif prefix is not None and sufix is not None:
+        story_title = prefix + ' ' + story_title + ' ' + sufix
     else:
         pass
 
@@ -86,11 +92,15 @@ def main() -> None:
     parser.add_argument('url', help='URL of the story\'s first page.', type=str)
     parser.add_argument('path', help='Folder path to save the file.', type=str)
     parser.add_argument('-t', '--custom-title', help='Custom title for the story.', type=str)
-    parser.add_argument('-ta', '--title-add', help='Adds something to the beggining of the title.'
+    parser.add_argument('-p', '--prefix', help='Adds something to the beggining of the title.'
                         'Auto inputs space after.', type=str)
+    parser.add_argument('-s', '--sufix', help='Adds something to the end of the title.'
+                        'Auto inputs space before.', type=str)
+    parser.add_argument('-ta', '--title-add', nargs='+', type=[str|int, str],
+                        help="Add a string to the title at a specific position")
 
     args = parser.parse_args()
-    asyncio.run(scrape_and_proc(args.url, args.path, args.custom_title, args.title_add))
+    asyncio.run(scrape_and_proc(args.url, args.path, args.custom_title, args.prefix))
 
 if __name__ == '__main__':
     main()
