@@ -1,5 +1,6 @@
 import httpx
 import asyncio
+import argparse
 from bs4 import BeautifulSoup as bs
 
 
@@ -29,15 +30,12 @@ async def scrape_and_proc():
     page_no = active_page.find_all('a', class_='l_bJ')[-1].text
 
     all_urls = []
-    n_page = 1
     for n in range(1, int(page_no) + 1):
-        if n_page == 1:
+        if n == 1:
             all_urls.append(base_url)
-            n_page += 1
 
         else:
-            all_urls.append(base_url + '?page=' + str(n_page))
-            n_page += 1
+            all_urls.append(base_url + '?page=' + str(n))
 
     async with httpx.AsyncClient() as client:
         tasks = (client.get(url, headers=headers, timeout=timeout) for url in all_urls)
@@ -77,6 +75,12 @@ def save_2_file(body, story_title: str):
     with open(f'D:/01 Libraries/Documents/Igor Martinez/{story_title}.html', 'w', encoding='utf-8') as f:
         f.write(body)
 
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument('url', help='URL of the story\'s first page.', type=str)
+    parser.add_argument('path', help='Folder path to save the file.', type=str)
+    
 
 if __name__ == '__main__':
     body, title = asyncio.run(scrape_and_proc())
