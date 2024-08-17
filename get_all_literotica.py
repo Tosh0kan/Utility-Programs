@@ -4,8 +4,9 @@ import argparse
 from bs4 import BeautifulSoup as bs
 
 
-class Arrays:
-    forbidden_characters = (
+async def scrape_and_proc(url: str, path: str, custom_title: str = None, title_add: str = None) -> None:
+    def title_legality(story_title: str) -> str:
+        FORBIDDEN_CHARACTERS = (
         '/',
         '|',
         '\\',
@@ -15,11 +16,30 @@ class Arrays:
         '"',
         '<',
         '>',
-    )
+        )
+        char_list = list(story_title)
+        forbidden_indexes = []
+        for n, e in enumerate(char_list):
+            if e in FORBIDDEN_CHARACTERS:
+                forbidden_indexes.append(n)
+                continue
 
+            else:
+                continue
 
-async def scrape_and_proc():
-    base_url = input("What's the story link? ")
+        if len(forbidden_indexes) == 0:
+            return ''.join(char_list)
+
+        for e in forbidden_indexes:
+            if char_list[e] == ':':
+                char_list[e] = '-'
+
+            else:
+                char_list[e] = ' NaN '
+
+        return ''.join(char_list)
+
+    base_url = url
 
     headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:108.0) Gecko/20100101 Firefox/108.0'}
     timeout = 5
@@ -27,6 +47,8 @@ async def scrape_and_proc():
     req = httpx.get(base_url, headers=headers, timeout=timeout)
     active_page = bs(req.text, 'lxml')
     story_title = active_page.find_all('li', class_='h_aW')[2].text
+    story_title = title_legality(story_title)
+
     page_no = active_page.find_all('a', class_='l_bJ')[-1].text
 
     all_urls = []
@@ -44,45 +66,31 @@ async def scrape_and_proc():
     pages_texts = [bs(page.text, 'lxml').find('div', class_='aa_ht').prettify() for page in reqs]
     text_body = ''.join(pages_texts)
 
-    return text_body, story_title
+    if custom_title is not None:
+        story_title = custom_title
+    else:
+        pass
 
-def title_legality(story_title: str):
-    char_list = list(story_title)
-    forbidden_indexes = []
-    for e in char_list:
-        if e in Arrays.forbidden_characters:
-            forbidden_indexes.append(char_list.index(e))
-            continue
+    if title_add is not None:
+        story_title = title_add + ' ' + story_title
+    else:
+        pass
 
-        else:
-            continue
+    with open(rf'{path}/{story_title}.html', 'w', encoding='utf-8') as f:
+        f.write(text_body)
 
-    if len(forbidden_indexes) == 0:
-        return ''.join(char_list)
-
-    for e in forbidden_indexes:
-        if char_list[e] == ':':
-            char_list[e] = '-'
-
-        else:
-            char_list[e] = ' NaN '
-
-    return ''.join(char_list)
-
-
-def save_2_file(body, story_title: str):
-    # folder_path = input("Folder path: ")
-    with open(f'D:/01 Libraries/Documents/Igor Martinez/{story_title}.html', 'w', encoding='utf-8') as f:
-        f.write(body)
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument('url', help='URL of the story\'s first page.', type=str)
     parser.add_argument('path', help='Folder path to save the file.', type=str)
-    
+    parser.add_argument('-t', '--custom-title', help='Custom title for the story.', type=str)
+    parser.add_argument('-ta', '--title-add', help='Adds something to the beggining of the title.'
+                        'Auto inputs space after.', type=str)
+
+    args = parser.parse_args()
+    asyncio.run(scrape_and_proc(args.url, args.path, args.custom_title, args.title_add))
 
 if __name__ == '__main__':
-    body, title = asyncio.run(scrape_and_proc())
-    title = title_legality(title)
-    save_2_file(body, title)
+    main()
