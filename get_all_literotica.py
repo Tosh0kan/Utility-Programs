@@ -69,26 +69,56 @@ async def scrape_and_proc(url: str, path: str, custom_title: str = None,
     pages_texts = [bs(page.text, 'lxml').find('div', class_='aa_ht').prettify() for page in reqs]
     text_body = ''.join(pages_texts)
 
+
     if custom_title is not None:
         story_title = custom_title
-    else:
-        pass
-
-    if prefix is not None:
+    elif prefix is not None and suffix is not None:
+        story_title = prefix + ' ' + story_title + ' ' + suffix
+    elif prefix is not None:
         story_title = prefix + ' ' + story_title
     elif suffix is not None:
         story_title = story_title + ' ' + suffix
-    elif prefix is not None and suffix is not None:
-        story_title = prefix + ' ' + story_title + ' ' + suffix
     elif title_add is not None:
-        sub_chars = ["}", "{"]
+        global usage_info
+        sub_chars = ["{", "}"]
+        padding_chars = ("<", "^", ">")
+        if len(title_add) < 3:
+            raise Exception("There's not engough parameters or too many for title addition."
+                            "\nThere are exaclty three, they must be in this order, and of these types:"
+                            f"{usage_info}")
+        elif len(title_add) == 3:
+            if title_add[1] not in padding_chars:
+                raise Exception("Invalid alignment option. Valid alignment options are:"
+                                "\n\t\t<: Left aglignment. Inserts to the left of the inserted text."
+                                "\n\t\t^: Center Alignment. Inserts to the left and right of the inserted text."
+                                "\n\t\t>: Right alignment. Inserts to the right of the inserted text.")
+            else:
+                if title_add[0].isdigit():
+                    idx_pos = title_add[0]
+                else:
+                    if len(title_add[0]) == 1:
+                        idx_pos = story_title.index(title_add[0])
+                    else:
+                        idx_pos = story_title.index(title_add[0]) + len(title_add[0])
+
+                alignment = title_add[1]
+                to_insert = title_add[2]
+
+        if alignment == '^':
+            form_syntax = list(f":{alignment}{len(to_insert)+2}")
+            for e in reversed(form_syntax):
+                sub_chars.insert(1, e)
+        else:
+            form_syntax = list(f":{alignment}{len(to_insert)+1}")
+            for e in reversed(form_syntax):
+                sub_chars.insert(1, e)
+
         story_title_list = list(story_title)
 
-        for e in sub_chars:
-            story_title_list.insert(int(title_add[0]), e)
+        for e in reversed(sub_chars):
+            story_title_list.insert(int(idx_pos), e)
 
-        procced_title_add = ''.join(story_title_list)
-        story_title = procced_title_add.format(' ' + title_add[1] + ' ')
+        story_title = ''.join(story_title_list).format(to_insert)
     else:
         pass
 
@@ -98,6 +128,23 @@ async def scrape_and_proc(url: str, path: str, custom_title: str = None,
 
 
 def main() -> None:
+    usage_info = """
+    \n
+    [[index|string to seek][<|^|>][string]]
+    \n
+    \t\t Index or String: The index at which the text will be inserted. First character of the text is index 0.
+    \t\tEverything originally at that index and after will be moved to the right.
+    \t\tAlternatively, you can input a string, after which the text to be inserted will be placed.
+    \n
+    \t\t<: Left aglignment. Inserts space to the right of the inserted text.
+    \t\t^: Center Alignment. Inserts space both to the left and right of the inserted text.
+    \t\t>: Right alignment. Inserts space to the right of the inserted text.
+    \n
+    \t\tString: The text you wish to place.
+    \n
+    \t\tWARNING: All parameters must be INDIVIDUALLY enclosed in double quotation marks.
+    """
+
     parser = argparse.ArgumentParser()
     parser.add_argument('url', help='URL of the story\'s first page.', type=str)
     parser.add_argument('path', help='Folder path to save the file.', type=str)
@@ -106,13 +153,12 @@ def main() -> None:
                         'Auto inputs space after.', type=str)
     parser.add_argument('-s', '--suffix', help='Adds something to the end of the title.'
                         'Auto inputs space before.', type=str)
-    parser.add_argument('-ta', '--title-add', nargs='+', type=int and str,
-                        help="Add a string to the title at a specific position. "
-                        "The character at that position originally will be moved to the right.")
+    parser.add_argument('-ta', '--title-addition', nargs='+', type=int|str and str,
+                        help=f"{usage_info}")
 
     args = parser.parse_args()
     asyncio.run(scrape_and_proc(args.url, args.path, args.custom_title, args.prefix,
-                                args.suffix, args.title_add))
+                                args.suffix, args.title_addition))
 
 if __name__ == '__main__':
     main()
