@@ -1,3 +1,4 @@
+import os
 import httpx
 import asyncio
 import argparse
@@ -93,9 +94,9 @@ async def scrape_and_proc(url: str, path: str, custom_title: str = None,
                 story_title_list.insert(int(idx_pos), e)
 
             story_title = ''.join(story_title_list).format(to_insert)
+            return story_title
         else:
-            pass
-        return story_title
+            return og_title
 
 
     base_url = url
@@ -154,7 +155,8 @@ def main() -> None:
 
     parser = argparse.ArgumentParser()
     parser.add_argument('url', help='URL of the story\'s first page.', type=str)
-    parser.add_argument('path', help='Folder path to save the file.', type=str)
+    parser.add_argument('path', help='Folder path to save the file.', type=str,
+                        default=os.getcwd())
     parser.add_argument('-t', '--custom-title', help='Custom title for the story.', type=str)
     parser.add_argument('-p', '--prefix', help='Adds something to the beggining of the title.'
                         'Auto inputs space after.', type=str)
