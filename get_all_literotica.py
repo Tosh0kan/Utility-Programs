@@ -64,10 +64,10 @@ async def scrape_and_proc(url: str, path: str, custom_title: str = None,
             elif len(title_add) == 3:
                 if title_add[1] not in padding_chars:
                     raise Exception("Invalid alignment option. Valid alignment options are:"
-                                    "\n\t\t<: Left aglignment. Inserts space to the left of the inserted text."
+                                    "\n\t\t<: Left aglignment. Inserts space to the right of the inserted text."
                                     "\n\t\t^: Center Alignment. Inserts space to the left and right"
                                     "\t\tof the inserted text."
-                                    "\n\t\t>: Right alignment. Inserts space to the right of the inserted text.")
+                                    "\n\t\t>: Right alignment. Inserts space to the left of the inserted text.")
                 else:
                     if title_add[0].isdigit():
                         idx_pos = title_add[0]
