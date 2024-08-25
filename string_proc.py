@@ -2,6 +2,8 @@ import random
 import argparse
 import pyperclip
 import datetime as dt
+from base64 import (b64decode,
+                    b64encode)
 
 def meme_string(string: str) -> str:
     split_str = [e for e in string]
@@ -68,6 +70,12 @@ def snowflake_format(lid: int) -> str:
 
     return dt_str
 
+def b64(txt: str, decode: bool = True):
+    if decode:
+        return b64decode(txt)
+    else:
+        return b64encode(txt.encode('utf-8'))
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-mt', '--meme-text', type=str, default=None,
@@ -81,6 +89,8 @@ def main():
                         help='Capitalizes the appropriate pronouns')
     parser.add_argument('-s', '--snowflake-timestamp', type=int, default=None,
                         help='Formats snowflake IDs, like a Discord message ID to its timestamp.')
+    parser.add_argument('-b64d', "--base64-decode", type=str, default=None)
+    parser.add_argument('-b64e', "--base64-encode", type=str, default=None)
 
     args = parser.parse_args()
     if args.meme_text is not None:
@@ -103,6 +113,14 @@ def main():
         timestamp = snowflake_format(args.snowflake_timestamp)
         pyperclip.copy(timestamp)
         print(timestamp)
+    elif args.base64_decode is not None:
+        decoded_text = b64(args.base64_decode).decode('utf-8')
+        pyperclip.copy(decoded_text)
+        print(decoded_text)
+    elif args.base64_encode is not None:
+        encoded_text = b64(args.base64_encode, decode=False).decode('utf-8')
+        pyperclip.copy(encoded_text)
+        print(encoded_text)
 
 if __name__ == '__main__':
     main()
