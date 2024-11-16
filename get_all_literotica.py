@@ -103,10 +103,12 @@ def scrape_and_proc(url: str, path: str, custom_title: str = None,
             tasks = (client.get(c_url, headers=headers, timeout=timeout) for c_url in s_url)
             unstrained_chapters = await asyncio.gather(*tasks)
 
-        chapters = [bs(chapter.text, 'lxml') for chapter in unstrained_chapters]
+        chapters = []
+        for chapter in unstrained_chapters:
+            chapters.append(bs(chapter.text, 'lxml'))
         return chapters
 
-    async def chapter_proc(chapter: bs) -> None:
+    async def chapter_proc(chapter: bs, ch_url: str = None) -> None:
         story_title = chapter.find_all('li', class_='h_aW')[2].text
         story_title = title_legality(story_title)
         all_ch_pages = []
@@ -115,12 +117,12 @@ def scrape_and_proc(url: str, path: str, custom_title: str = None,
 
             for n in range(1, int(page_no) + 1):
                 if n == 1:
-                    all_ch_pages.append(base_url)
+                    all_ch_pages.append(ch_url)
 
                 else:
-                    all_ch_pages.append(base_url + '?page=' + str(n))
+                    all_ch_pages.append(ch_url + '?page=' + str(n))
         except IndexError:
-            all_ch_pages.append(base_url)
+            all_ch_pages.append(ch_url)
 
         async with httpx.AsyncClient() as client:
             tasks = (client.get(url, headers=headers, timeout=timeout) for url in all_ch_pages)
@@ -135,19 +137,19 @@ def scrape_and_proc(url: str, path: str, custom_title: str = None,
         with open(rf'{path}/{story_title}.html', 'w', encoding='utf-8') as f:
             f.write(text_body)
 
-    base_url = url
+    ch_url = url
 
     headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:108.0) Gecko/20100101 Firefox/108.0'}
     timeout = 5
 
-    req = httpx.get(base_url, headers=headers, timeout=timeout)
+    req = httpx.get(ch_url, headers=headers, timeout=timeout)
     bsed_req = bs(req.text, 'lxml')
 
-    if 'series' in base_url:
+    if 'series' in ch_url:
         ch_urls = [e.get('href') for e in bsed_req.find_all('a', class_='br_rj')]
         chapters = asyncio.run(series_proc(ch_urls))
-        for chapter in chapters:
-            asyncio.run(chapter_proc(chapter))
+        for chapter, ch_url in zip(chapters, ch_urls):
+            asyncio.run(chapter_proc(chapter, ch_url=ch_url))
     else:
         asyncio.run(chapter_proc(bsed_req))
 
