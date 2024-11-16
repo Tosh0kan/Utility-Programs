@@ -5,7 +5,7 @@ import argparse
 from bs4 import BeautifulSoup as bs
 
 
-async def scrape_and_proc(url: str, path: str, custom_title: str = None,
+def scrape_and_proc(url: str, path: str, custom_title: str = None,
                           prefix: str = None, suffix: str = None,
                           title_add: list[str] = None) -> None:
 
@@ -96,9 +96,36 @@ async def scrape_and_proc(url: str, path: str, custom_title: str = None,
 
             story_title = ''.join(story_title_list).format(to_insert)
             return story_title
-        else:
-            return og_title
+        return og_title
 
+    async def chapter_proc(active_page: str) -> None:
+        story_title = active_page.find_all('li', class_='h_aW')[2].text
+        story_title = title_legality(story_title)
+        all_urls = []
+        try:
+            page_no = active_page.find_all('a', class_='l_bJ')[-1].text
+
+            for n in range(1, int(page_no) + 1):
+                if n == 1:
+                    all_urls.append(base_url)
+
+                else:
+                    all_urls.append(base_url + '?page=' + str(n))
+        except IndexError:
+            all_urls.append(base_url)
+
+        async with httpx.AsyncClient() as client:
+            tasks = (client.get(url, headers=headers, timeout=timeout) for url in all_urls)
+            reqs = await asyncio.gather(*tasks)
+
+        pages_texts = [bs(page.text, 'lxml').find('div', class_='aa_ht').prettify() for page in reqs]
+        text_body = ''.join(pages_texts)
+
+        story_title = string_insertion(story_title, prefix=prefix, suffix=suffix,
+                                    custom_title=custom_title, title_add=title_add)
+
+        with open(rf'{path}/{story_title}.html', 'w', encoding='utf-8') as f:
+            f.write(text_body)
 
     base_url = url
 
@@ -106,32 +133,14 @@ async def scrape_and_proc(url: str, path: str, custom_title: str = None,
     timeout = 5
 
     req = httpx.get(base_url, headers=headers, timeout=timeout)
-    active_page = bs(req.text, 'lxml')
-    story_title = active_page.find_all('li', class_='h_aW')[2].text
-    story_title = title_legality(story_title)
+    bsed_req = bs(req.text, 'lxml')
 
-    page_no = active_page.find_all('a', class_='l_bJ')[-1].text
-
-    all_urls = []
-    for n in range(1, int(page_no) + 1):
-        if n == 1:
-            all_urls.append(base_url)
-
-        else:
-            all_urls.append(base_url + '?page=' + str(n))
-
-    async with httpx.AsyncClient() as client:
-        tasks = (client.get(url, headers=headers, timeout=timeout) for url in all_urls)
-        reqs = await asyncio.gather(*tasks)
-
-    pages_texts = [bs(page.text, 'lxml').find('div', class_='aa_ht').prettify() for page in reqs]
-    text_body = ''.join(pages_texts)
-
-    story_title = string_insertion(story_title, prefix=prefix, suffix=suffix,
-                                   custom_title=custom_title, title_add=title_add)
-
-    with open(rf'{path}/{story_title}.html', 'w', encoding='utf-8') as f:
-        f.write(text_body)
+    if 'series' in base_url:
+        ch_urls = [e.get('href') for e in bsed_req.find_all('a', class_='br_rj')]
+        for c in ch_urls:
+            asyncio.run(chapter_proc(c))
+    else:
+        asyncio.run(chapter_proc(bsed_req))
 
 
 
@@ -167,8 +176,7 @@ def main() -> None:
                         help=f"{usage_info}")
 
     args = parser.parse_args()
-    asyncio.run(scrape_and_proc(args.url, args.path, args.custom_title, args.prefix,
-                                args.suffix, args.title_addition))
+    scrape_and_proc(args.url, args.path, args.custom_title, args.prefix, args.suffix, args.title_addition)
 
 if __name__ == '__main__':
     main()
