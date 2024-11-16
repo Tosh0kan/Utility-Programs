@@ -98,27 +98,35 @@ def scrape_and_proc(url: str, path: str, custom_title: str = None,
             return story_title
         return og_title
 
-    async def chapter_proc(active_page: str) -> None:
-        story_title = active_page.find_all('li', class_='h_aW')[2].text
+    async def series_proc(s_url: list) -> list[bs]:
+        async with httpx.AsyncClient() as client:
+            tasks = (client.get(c_url, headers=headers, timeout=timeout) for c_url in s_url)
+            unstrained_chapters = await asyncio.gather(*tasks)
+
+        chapters = [bs(chapter.text, 'lxml') for chapter in unstrained_chapters]
+        return chapters
+
+    async def chapter_proc(chapter: bs) -> None:
+        story_title = chapter.find_all('li', class_='h_aW')[2].text
         story_title = title_legality(story_title)
-        all_urls = []
+        all_ch_pages = []
         try:
-            page_no = active_page.find_all('a', class_='l_bJ')[-1].text
+            page_no = chapter.find_all('a', class_='l_bJ')[-1].text
 
             for n in range(1, int(page_no) + 1):
                 if n == 1:
-                    all_urls.append(base_url)
+                    all_ch_pages.append(base_url)
 
                 else:
-                    all_urls.append(base_url + '?page=' + str(n))
+                    all_ch_pages.append(base_url + '?page=' + str(n))
         except IndexError:
-            all_urls.append(base_url)
+            all_ch_pages.append(base_url)
 
         async with httpx.AsyncClient() as client:
-            tasks = (client.get(url, headers=headers, timeout=timeout) for url in all_urls)
-            reqs = await asyncio.gather(*tasks)
+            tasks = (client.get(url, headers=headers, timeout=timeout) for url in all_ch_pages)
+            pages = await asyncio.gather(*tasks)
 
-        pages_texts = [bs(page.text, 'lxml').find('div', class_='aa_ht').prettify() for page in reqs]
+        pages_texts = [bs(page.text, 'lxml').find('div', class_='aa_ht').prettify() for page in pages]
         text_body = ''.join(pages_texts)
 
         story_title = string_insertion(story_title, prefix=prefix, suffix=suffix,
@@ -137,11 +145,11 @@ def scrape_and_proc(url: str, path: str, custom_title: str = None,
 
     if 'series' in base_url:
         ch_urls = [e.get('href') for e in bsed_req.find_all('a', class_='br_rj')]
-        for c in ch_urls:
-            asyncio.run(chapter_proc(c))
+        chapters = asyncio.run(series_proc(ch_urls))
+        for chapter in chapters:
+            asyncio.run(chapter_proc(chapter))
     else:
         asyncio.run(chapter_proc(bsed_req))
-
 
 
 def main() -> None:
