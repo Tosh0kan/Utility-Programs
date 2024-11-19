@@ -108,7 +108,7 @@ def scrape_and_proc(url: str, path: str, custom_title: str = None,
             chapters.append(bs(chapter.text, 'lxml'))
         return chapters
 
-    async def chapter_proc(chapter: bs, ch_url: str = None) -> None:
+    async def chapter_proc(chapter: bs, ch_url: str) -> None:
         story_title = chapter.find_all('li', class_='h_aW')[2].text
         story_title = title_legality(story_title)
         all_ch_pages = []
@@ -149,9 +149,9 @@ def scrape_and_proc(url: str, path: str, custom_title: str = None,
         ch_urls = [e.get('href') for e in bsed_req.find_all('a', class_='br_rj')]
         chapters = asyncio.run(series_proc(ch_urls))
         for chapter, ch_url in zip(chapters, ch_urls):
-            asyncio.run(chapter_proc(chapter, ch_url=ch_url))
+            asyncio.run(chapter_proc(chapter, ch_url))
     else:
-        asyncio.run(chapter_proc(bsed_req))
+        asyncio.run(chapter_proc(bsed_req, ch_url))
 
 
 def main() -> None:
