@@ -83,9 +83,9 @@ async def img_convert(path_outer: str, fmt: str, async_flag: bool = False,
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-p", "--path", help="Input file or folder path with serveral images to convert.",
+    parser.add_argument("path", help="Input file or folder path with serveral images to convert.",
                         default=os.getcwd())
-    parser.add_argument("-f", "--format", help="Output file/files format")
+    parser.add_argument("format", help="Output file/files format")
     parser.add_argument("-b", "--boost", help="Enables asynchronous execution when given a folder path."
                         "Extremely fast but extremely CPU intensive. Default is OFF.",
                         default=False, action="store_true")
