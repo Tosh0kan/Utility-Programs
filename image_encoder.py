@@ -57,6 +57,7 @@ class MainWin(QMainWindow):
         if file_split[1] == ".txt":
             with open(file_path, 'r') as f:
                 image_s = f.read()
+                image_s = image_s.replace('data:image/png;base64,', '')
 
             with open(r"{}.jpeg".format(file_split[0]), "wb") as f:
                 f.write(base64.b64decode(image_s))
