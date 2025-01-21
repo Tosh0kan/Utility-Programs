@@ -166,7 +166,7 @@ def main() -> None:
     \n
     \t\t<: Left aglignment. Inserts space to the right of the inserted text.
     \t\t^: Center Alignment. Inserts space both to the left and right of the inserted text.
-    \t\t>: Right alignment. Inserts space to the right of the inserted text.
+    \t\t>: Right alignment. Inserts space to the left of the inserted text.
     \n
     \t\tString: The text you wish to place.
     \n
