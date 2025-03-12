@@ -1,8 +1,13 @@
 import pyperclip
 import pynput
+from time import sleep
 
 
 def clipboard_proccer():
+    sleep(0.1)
+    return _clipboard_proccer()
+
+def _clipboard_proccer():
     print('into proccer')
     current_value = pyperclip.paste()
     current_value = current_value.replace('\n','')
@@ -11,9 +16,10 @@ def clipboard_proccer():
     print('out of proccer')
 
 def for_canonical(f):
-    return lambda k: f(l.canonical(k))
+    return lambda k: f(listener.canonical(k))
 
 if __name__ == '__main__':
     hotkey = pynput.keyboard.HotKey(pynput.keyboard.HotKey.parse('<ctrl>+c'), clipboard_proccer)
-    with pynput.keyboard.Listener(on_press=for_canonical(hotkey.press), on_release=for_canonical(hotkey.release)) as l:
-        l.join()
+    with pynput.keyboard.Listener(on_press=for_canonical(hotkey.press),
+                                  on_release=for_canonical(hotkey.release)) as listener:
+        listener.join()
