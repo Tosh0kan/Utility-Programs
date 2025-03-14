@@ -5,10 +5,13 @@ from time import sleep
 
 def wrapper_proccer():
     def clipboard_proccer():
-        current_value = pyperclip.paste()
-        current_value = current_value.replace('\n','')
-        current_value = current_value.replace('\r', '')
-        pyperclip.copy(current_value)
+        if pyperclip.paste() != '':
+            current_value = pyperclip.paste()
+            current_value = current_value.replace('\n','')
+            current_value = current_value.replace('\r', '')
+            pyperclip.copy(current_value)
+        else:
+            pass
 
     sleep(0.01)
     return clipboard_proccer()
