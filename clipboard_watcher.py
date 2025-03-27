@@ -7,7 +7,7 @@ def wrapper_proccer():
     def clipboard_proccer():
         if pyperclip.paste() != '':
             current_value = pyperclip.paste()
-            current_value = current_value.replace('\n','')
+            current_value = current_value.replace('\n', '')
             current_value = current_value.replace('\r', '')
             pyperclip.copy(current_value)
         else:
@@ -18,7 +18,7 @@ def wrapper_proccer():
 
 def for_canonical(f):
     return lambda k: f(listener.canonical(k))
-''
+
 if __name__ == '__main__':
     hotkey = pynput.keyboard.HotKey(pynput.keyboard.HotKey.parse('<ctrl>+c'), wrapper_proccer)
     with pynput.keyboard.Listener(on_press=for_canonical(hotkey.press),
