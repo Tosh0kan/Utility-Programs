@@ -16,11 +16,24 @@ def wrapper_proccer():
     sleep(0.01)
     return clipboard_proccer()
 
-def for_canonical(f):
-    return lambda k: f(listener.canonical(k))
+def quit_process():
+    return quit()
+
+def on_press(key):
+    canonical_key = listener.canonical(key)
+    for hotkey in hotkeys:
+        hotkey.press(canonical_key)
+
+def on_release(key):
+    canonical_key = listener.canonical(key)
+    for hotkey in hotkeys:
+        hotkey.release(canonical_key)
 
 if __name__ == '__main__':
-    hotkey = pynput.keyboard.HotKey(pynput.keyboard.HotKey.parse('<ctrl>+c'), wrapper_proccer)
-    with pynput.keyboard.Listener(on_press=for_canonical(hotkey.press),
-                                  on_release=for_canonical(hotkey.release)) as listener:
+    hotkeys = [
+        pynput.keyboard.HotKey(pynput.keyboard.HotKey.parse('<ctrl>+c'), wrapper_proccer),
+        pynput.keyboard.HotKey(pynput.keyboard.HotKey.parse('<ctrl>+q'), quit_process),
+        ]
+    with pynput.keyboard.Listener(on_press=on_press,
+                                  on_release=on_release) as listener:
         listener.join()
