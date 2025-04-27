@@ -19,9 +19,6 @@ def wrapper_proccer():
 def quit_process():
     return quit()
 
-def for_canonical(key):
-    return lambda k: key(listener.canonical(k))
-
 if __name__ == '__main__':
     with pynput.keyboard.GlobalHotKeys({'<ctrl>+c': wrapper_proccer,
                                         '<ctrl>+q': quit_process}) as listener:
