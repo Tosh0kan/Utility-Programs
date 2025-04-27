@@ -34,10 +34,21 @@ def goddess_format() -> None:
     else:
         pass
 
-def for_canonical(key):
-    return lambda k: key(listener.canonical(k))
+def on_press(key):
+    canonical_key = listener.canonical(key)
+    for hotkey in hotkeys:
+        hotkey.press(canonical_key)
+
+def on_release(key):
+    canonical_key = listener.canonical(key)
+    for hotkey in hotkeys:
+        hotkey.release(canonical_key)
+
+hotkeys = [
+    pynput.keyboard.HotKey(pynput.keyboard.HotKey.parse('<ctrl>+<shift>+g'), goddess_format)
+    ]
 
 if __name__ == '__main__':
-    with pynput.keyboard.GlobalHotKeys({'<ctrl>+<shift>+g': goddess_format
-                                        }) as listener:
+    with pynput.keyboard.Listener(on_press=on_press,
+                                  on_release=on_release) as listener:
         listener.join()
