@@ -19,21 +19,10 @@ def wrapper_proccer():
 def quit_process():
     return quit()
 
-def on_press(key):
-    canonical_key = listener.canonical(key)
-    for hotkey in hotkeys:
-        hotkey.press(canonical_key)
-
-def on_release(key):
-    canonical_key = listener.canonical(key)
-    for hotkey in hotkeys:
-        hotkey.release(canonical_key)
+def for_canonical(key):
+    return lambda k: key(listener.canonical(k))
 
 if __name__ == '__main__':
-    hotkeys = [
-        pynput.keyboard.HotKey(pynput.keyboard.HotKey.parse('<ctrl>+c'), wrapper_proccer),
-        pynput.keyboard.HotKey(pynput.keyboard.HotKey.parse('<ctrl>+q'), quit_process),
-        ]
-    with pynput.keyboard.Listener(on_press=on_press,
-                                  on_release=on_release) as listener:
+    with pynput.keyboard.GlobalHotKeys({'<ctrl>+c': wrapper_proccer,
+                                        '<ctrl>+q': quit_process}) as listener:
         listener.join()
