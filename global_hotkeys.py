@@ -34,6 +34,9 @@ def goddess_format() -> None:
     else:
         pass
 
+def for_canonical(key):
+    return lambda k: key(listener.canonical(k))
+
 if __name__ == '__main__':
     with pynput.keyboard.GlobalHotKeys({'<ctrl>+<shift>+g': goddess_format
                                         }) as listener:
