@@ -10,7 +10,8 @@ def goddess_format() -> None:
     CAPITAL_PRONOUNS = {'you': 'You', 'you\'re': 'You\'re', 'your': 'Your',
                         'yours': 'Yours', 'yourself': 'Yourself', 'goddess': 'Goddess',
                         'her': 'Her', 'herself': 'Herself', 'she': 'She', 'min': 'Min',
-                        'juu': 'Juu'
+                        'juu': 'Juu', 'minjuu': 'MinJuu', 'soo': 'Soo', 'jin': 'Jin',
+                        "soojin": "SooJin"
                         }
 
     title = win32gui.GetWindowText(win32gui.GetForegroundWindow())
@@ -22,7 +23,7 @@ def goddess_format() -> None:
         sleep(0.1)
         with pyautogui.hold('ctrl'):
             pyautogui.press('a')
-            sleep(0.05)
+            sleep(0.1)
             pyautogui.press('x')
         sleep(0.2)
         text = re.split(r'(\W)', pyperclip.paste())
