@@ -9,14 +9,19 @@ from time import sleep
 def goddess_format() -> None:
     CAPITAL_PRONOUNS = {'you': 'You', 'you\'re': 'You\'re', 'your': 'Your',
                         'yours': 'Yours', 'yourself': 'Yourself', 'goddess': 'Goddess',
-                        'her': 'Her', 'herself': 'Herself', 'she': 'She', 'min': 'Min',
-                        'juu': 'Juu', 'minjuu': 'MinJuu', 'soo': 'Soo', 'jin': 'Jin',
-                        "soojin": "SooJin"
+                        'min': 'Min', 'juu': 'Juu', 'minjuu': 'MinJuu',
+                        'soo': 'Soo', 'jin': 'Jin', "soojin": "SooJin"
                         }
 
     title = win32gui.GetWindowText(win32gui.GetForegroundWindow())
 
     if 'Discord' in title:
+        sleep(0.1)
+        file_logo = pyautogui.locateOnScreen('icons.png', confidence=0.9)
+        x, y, w, h = file_logo
+        while True:
+            pyautogui.moveTo(x - 50, y + 20)
+            break
         sleep(0.2)
         pyautogui.keyUp('ctrl')
         pyautogui.keyUp('shift')
