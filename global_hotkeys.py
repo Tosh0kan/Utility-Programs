@@ -44,7 +44,32 @@ def goddess_format() -> None:
     else:
         pass
 
+def wrapper_proccer():
+    def clipboard_proccer():
+        if pyperclip.paste() != '':
+            current_value = pyperclip.paste()
+            current_value = current_value.replace('\n', '').replace('\r', '').replace(' ', '')
+            pyperclip.copy(current_value)
+        else:
+            pass
+
+    pyautogui.keyUp('ctrl')
+    pyautogui.keyUp('shift')
+    pyautogui.keyUp('c')
+    sleep(0.2)
+    with pyautogui.hold('ctrl'):
+        sleep(0.2)
+        pyautogui.press('c')
+    print('working')
+    sleep(0.2)
+    return clipboard_proccer()
+
+def quit_process():
+    return quit()
+
 if __name__ == '__main__':
-    with pynput.keyboard.GlobalHotKeys({'<ctrl>+<shift>+g': goddess_format
+    with pynput.keyboard.GlobalHotKeys({'<ctrl>+<shift>+g': goddess_format,
+                                        '<ctrl>+<shift>+c': wrapper_proccer,
+                                        '<ctrl>+<shift>+q': quit_process
                                         }) as listener:
         listener.join()
