@@ -5,6 +5,7 @@ import pynput
 import pyautogui
 import pyperclip
 from time import sleep
+from datetime import datetime as dt
 
 
 def goddess_format() -> None:
