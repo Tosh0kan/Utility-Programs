@@ -1,3 +1,4 @@
+import os
 import re
 import win32gui
 import pynput
@@ -67,9 +68,29 @@ def wrapper_proccer():
 def quit_process():
     return quit()
 
+def restart_lcore():
+    print("into restart_lcore")
+    pyautogui.keyUp('ctrl')
+    pyautogui.keyUp('alt')
+    pyautogui.keyUp('shift')
+    pyautogui.keyUp('r')
+    sleep(0.2)
+    os.system('taskkill /f /im lcore.exe')
+    sleep(0.2)
+    os.startfile(r"C:\Program Files\Logitech Gaming Software\LCore.exe")
+    sleep(2)
+    while True:
+        pc_img = pyautogui.locateCenterOnScreen('logitech_computer.png', confidence=0.9)
+        if pc_img is not None:
+            break
+    x, y = pc_img
+    print("before click")
+    pyautogui.click(x, y)
+
 if __name__ == '__main__':
     with pynput.keyboard.GlobalHotKeys({'<ctrl>+<shift>+g': goddess_format,
                                         '<ctrl>+<shift>+c': wrapper_proccer,
-                                        '<ctrl>+<shift>+q': quit_process
+                                        '<ctrl>+<shift>+q': quit_process,
+                                        '<ctrl>+<alt>+<shift>+r': restart_lcore
                                         }) as listener:
         listener.join()
