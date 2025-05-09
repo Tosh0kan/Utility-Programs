@@ -86,6 +86,8 @@ def restart_lcore():
     x, y = pc_img
     print("before click")
     pyautogui.click(x, y)
+    with pyautogui.hold('ctrl'):
+        pyautogui.press('f4')
 
 if __name__ == '__main__':
     with pynput.keyboard.GlobalHotKeys({'<ctrl>+<shift>+g': goddess_format,
