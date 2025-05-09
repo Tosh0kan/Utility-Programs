@@ -1,9 +1,11 @@
+import os
 import re
 import win32gui
 import pynput
 import pyautogui
 import pyperclip
 from time import sleep
+from datetime import datetime as dt
 
 
 def goddess_format() -> None:
@@ -67,9 +69,34 @@ def wrapper_proccer():
 def quit_process():
     return quit()
 
+def restart_lcore():
+    start = dt.now()
+    print("into restart_lcore")
+    pyautogui.keyUp('ctrl')
+    pyautogui.keyUp('alt')
+    pyautogui.keyUp('shift')
+    pyautogui.keyUp('r')
+    sleep(0.2)
+    print("before killing process")
+    os.system('taskkill /f /im lcore.exe')
+    sleep(0.2)
+    print("before starting process")
+    os.startfile(r"C:\Program Files\Logitech Gaming Software\LCore.exe")
+    sleep(2)
+    while True:
+        print("into loop")
+        pc_img = pyautogui.locateCenterOnScreen('logitech_computer.png', confidence=0.9)
+        if pc_img is not None:
+            break
+    x, y = pc_img
+    print("before click")
+    pyautogui.click(x, y)
+    print(dt.now() - start)
+
 if __name__ == '__main__':
     with pynput.keyboard.GlobalHotKeys({'<ctrl>+<shift>+g': goddess_format,
                                         '<ctrl>+<shift>+c': wrapper_proccer,
-                                        '<ctrl>+<shift>+q': quit_process
+                                        '<ctrl>+<shift>+q': quit_process,
+                                        '<ctrl>+<alt>+<shift>+r': restart_lcore
                                         }) as listener:
         listener.join()
