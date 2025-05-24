@@ -1,5 +1,6 @@
 import os
 import json
+import argparse
 
 def line_rip(dir_path) -> None:
     def json_rip() -> dict:
@@ -37,4 +38,8 @@ def line_rip(dir_path) -> None:
     txt_save(json_rip())
 
 
-line_rip(r"D:\Scanlation\水星の魔女\_ocr\c1")
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('dir_path', type=str)
+    args = parser.parse_args()
+    line_rip(args.dir_path)
