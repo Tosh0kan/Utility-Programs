@@ -27,13 +27,17 @@ def line_rip(dir_path) -> None:
 
     def txt_save(pages: dict) -> None:
         document = Document()
-        final_txt = ''
         for key, value in pages.items():
-            final_txt += 'Page ' + key + '\n'
+            document.add_heading('Page ' + key, level=2)
+
+            for n in range(2):
+                document.add_paragraph()
+
             for n in value:
-                final_txt += n + '\n'
-            final_txt += '\n\n\n'
-        document.add_paragraph(final_txt)
+                document.add_paragraph(n)
+
+            for n in range(3):
+                document.add_paragraph()
         document.save(dir_path + r'\speech_extracted.docx')
 
     txt_save(json_rip())
