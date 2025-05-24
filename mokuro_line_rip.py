@@ -1,6 +1,7 @@
 import os
 import json
 import argparse
+from docx import Document
 
 def line_rip(dir_path) -> None:
     def json_rip() -> dict:
@@ -25,15 +26,15 @@ def line_rip(dir_path) -> None:
         return pages
 
     def txt_save(pages: dict) -> None:
+        document = Document()
         final_txt = ''
         for key, value in pages.items():
-            final_txt += key + '\n'
+            final_txt += 'Page ' + key + '\n'
             for n in value:
                 final_txt += n + '\n'
             final_txt += '\n\n\n'
-
-        with open(dir_path + r'\speech_extracted.txt', 'w', encoding='utf-8') as f:
-            f.write(final_txt)
+        document.add_paragraph(final_txt)
+        document.save(dir_path + r'\speech_extracted.docx')
 
     txt_save(json_rip())
 
