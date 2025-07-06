@@ -34,7 +34,6 @@ def fullwidth(string: str) -> str|None:
             cnt += 1
         return ''.join(split_str)
     except KeyError as err:
-        err = str(err)
         print(f'The <{err}> character is not supported. Only unnacented letters, digits, punctuation, '
               'and the special characters \', \", #, $, %, &, ), (, *, /, +, -, are allowed.')
         quit()
@@ -49,8 +48,8 @@ def snowflake_format(lid: int) -> str:
     to_proc = list(dt_str.split('.')[1])
     while to_proc[-1] == '0':
         to_proc.pop(-1)
-    to_proc = ''.join(to_proc)
-    dt_str = dt_str.split('.')[0] + '.' + to_proc
+    joined_to_proc = ''.join(to_proc)
+    dt_str = dt_str.split('.')[0] + '.' + joined_to_proc
 
     return dt_str
 
@@ -59,6 +58,13 @@ def b64(txt: str, decode: bool = True):
         return b64decode(txt)
     else:
         return b64encode(txt.encode('utf-8'))
+
+def md_quote() -> str:
+    unproc_str = pyperclip.paste()
+    unproc_str_list = unproc_str.split('\r\n\r\n')
+    procced_str_list = ['> ' + e for e in unproc_str_list]
+    procced_str = '\r\n\r\n'.join(procced_str_list)
+    return procced_str
 
 def main():
     parser = argparse.ArgumentParser()
@@ -73,6 +79,8 @@ def main():
                         help='Formats snowflake IDs, like a Discord message ID to its timestamp.')
     parser.add_argument('-b64d', "--base64-decode", type=str, default=None)
     parser.add_argument('-b64e', "--base64-encode", type=str, default=None)
+    parser.add_argument('-mdq', "--markdown-quote", action='store_true', default=None,
+                        help='Converts the text to a markdown quote.')
 
     args = parser.parse_args()
     if args.meme_text is not None:
@@ -85,6 +93,8 @@ def main():
         print(f"Sent <{titled}> to clipboard!")
     elif args.fullwidth is not None:
         fullwidthed = fullwidth(args.fullwidth)
+        if fullwidthed is None:
+            quit()
         pyperclip.copy(fullwidthed)
         print(f"Sent <{fullwidthed}> to clipboard!")
     elif args.snowflake_timestamp is not None:
@@ -99,6 +109,10 @@ def main():
         encoded_text = b64(args.base64_encode, decode=False).decode('utf-8')
         pyperclip.copy(encoded_text)
         print(encoded_text)
+    elif args.markdown_quote is not None:
+        mdq = md_quote()
+        pyperclip.copy(mdq)
+        print("Procced text sent to clipboard!")
 
 if __name__ == '__main__':
     main()
