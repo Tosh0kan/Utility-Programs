@@ -1,7 +1,11 @@
+import os
 import random
 import argparse
 import pyperclip
+import pyautogui
 import datetime as dt
+from time import sleep
+from pathlib import Path
 from base64 import (b64decode,
                     b64encode)
 
@@ -66,6 +70,46 @@ def md_quote() -> str:
     procced_str = '\r\n\r\n'.join(procced_str_list)
     return procced_str
 
+def add_wows_location() -> None:
+    def img_rec_clicker(img_path: str) -> list[int]:
+        while True:
+            img_coords = pyautogui.locateCenterOnScreen(img_path, confidence=0.9)
+            if img_coords is not None:
+                break
+
+        return [img_coords[0], img_coords[1]]
+
+
+    wows_bins = "E:/Games/World_of_Warships/bin"
+
+    wows_curr_ver_exe = Path(wows_bins + f'/{max(os.listdir(wows_bins))}' + '/bin64' + '/WorldOfWarships64.exe')
+
+    os.startfile(r"C:/Program Files/Logitech Gaming Software/LCore.exe")
+    ### Finds the hotkey icon and clicks
+    sleep(0.55)
+    ic_x, ic_y = img_rec_clicker('hotkeys_icon.png')
+    pyautogui.click(ic_x, ic_y)
+
+    ### Finds the wows icon and double clicks it
+    sleep(0.55)
+    wows_x, wows_y = img_rec_clicker('wows_icon.png')
+    pyautogui.doubleClick(wows_x, wows_y)
+
+    ##Finds the add button and clicks it
+    sleep(0.55)
+    add_x, add_y = img_rec_clicker('plus_minus_icon.png')
+    pyautogui.click(add_x-15, add_y)
+
+    pyperclip.copy(str(wows_curr_ver_exe))
+    sleep(0.55)
+    pyautogui.hotkey('ctrl', 'v')
+    sleep(0.5)
+    pyautogui.press('enter')
+    sleep(0.5)
+    pyautogui.press('enter')
+    sleep(0.5)
+    pyautogui.hotkey('alt', 'f4')
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-mt', '--meme-text', type=str, default=None,
@@ -81,6 +125,8 @@ def main():
     parser.add_argument('-b64e', "--base64-encode", type=str, default=None)
     parser.add_argument('-mdq', "--markdown-quote", action='store_true', default=None,
                         help='Converts the text to a markdown quote.')
+    parser.add_argument('-wows', "--add-wows-location", action='store_true', default=None,
+                        help='Adds the World of Warships location to the clipboard.')
 
     args = parser.parse_args()
     if args.meme_text is not None:
@@ -113,6 +159,8 @@ def main():
         mdq = md_quote()
         pyperclip.copy(mdq)
         print("Procced text sent to clipboard!")
+    elif args.add_wows_location is not None:
+        add_wows_location()
 
 if __name__ == '__main__':
     main()
