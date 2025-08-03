@@ -18,11 +18,12 @@ def goddess_format() -> None:
 
     if 'Discord' in title:
         sleep(0.1)
-        file_logo = pyautogui.locateOnScreen('icons.png', confidence=0.9)
-        x, y, w, h = file_logo
         while True:
-            pyautogui.moveTo(x - 50, y + 20)
-            break
+            file_logo = pyautogui.locateOnScreen('icons.png', confidence=0.9)
+            if file_logo is not None:
+                x, y, w, h = file_logo
+                break
+        pyautogui.moveTo(x - 50, y + 20)
         sleep(0.2)
         pyautogui.keyUp('ctrl')
         pyautogui.keyUp('shift')
