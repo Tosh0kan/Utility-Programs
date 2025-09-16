@@ -39,7 +39,14 @@ def wrapper_proccer():
                     pyperclip.copy(current_value)
                 else:
                     pass
-                
+
+        else:
+            if pyperclip.paste() != '':
+                current_value = pyperclip.paste()
+                current_value = current_value.replace('\n', '').replace('\r', '').replace(' ', '')
+                pyperclip.copy(current_value)
+            else:
+                pass
 
     sleep(0.01)
     return clipboard_proccer()
