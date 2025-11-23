@@ -43,7 +43,7 @@ def wrapper_proccer():
         else:
             if pyperclip.paste() != '':
                 current_value = pyperclip.paste()
-                current_value = current_value.replace('\n', '').replace('\r', '').replace(' ', '')
+                current_value = current_value.replace('\n', '').replace('\r', '').replace(' ', '').replace('　', '')
                 pyperclip.copy(current_value)
             else:
                 pass
