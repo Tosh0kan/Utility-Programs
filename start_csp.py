@@ -1,7 +1,14 @@
 import os
+import sys
+import ctypes
 import pyautogui
 from time import sleep
 
+def is_admin() -> bool:
+    try:
+        return ctypes.windll.shell32.IsUserAnAdmin()
+    except Exception:
+        return False
 
 def start_csp() -> None:
     os.startfile(r"C:\Program Files\CELSYS\CLIP STUDIO 1.5\CLIP STUDIO PAINT\CLIPStudioPaint.exe")
@@ -15,4 +22,7 @@ def start_csp() -> None:
     pyautogui.press('enter')
 
 if __name__ == '__main__':
+    if not is_admin():
+        ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
+        sys.exit(0)
     start_csp()
