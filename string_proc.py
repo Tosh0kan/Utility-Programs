@@ -1,4 +1,5 @@
 import os
+import psutil
 import random
 import argparse
 import pyperclip
@@ -110,6 +111,20 @@ def add_wows_location() -> None:
     sleep(0.5)
     pyautogui.hotkey('alt', 'f4')
 
+def demerit_calc(x:int, y:int) -> float:
+    return (x * 0.25) + (y * 0.2)
+
+def reset_lcore() -> None:
+    PROCNAME = "LCore.exe"
+    for proc in psutil.process_iter():
+        if proc.name() == PROCNAME:
+            proc.kill()
+
+    os.startfile(r"C:/Program Files/Logitech Gaming Software/LCore.exe")
+    sleep(2)
+    pyautogui.click(1655, 368)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-mt', '--meme-text', type=str, default=None,
@@ -127,6 +142,9 @@ def main():
                         help='Converts the text to a markdown quote.')
     parser.add_argument('-wows', "--add-wows-location", action='store_true', default=None,
                         help='Adds the World of Warships location to the clipboard.')
+    parser.add_argument('-r', '--review-math', default=None, help='Calculates total demerits.')
+    parser.add_argument('-rl', '--reset-lcore', action='store_true', default=None,
+                        help='Resets Logitech Gaming Utility.')
 
     args = parser.parse_args()
     if args.meme_text is not None:
@@ -161,6 +179,10 @@ def main():
         print("Procced text sent to clipboard!")
     elif args.add_wows_location is not None:
         add_wows_location()
+    elif args.review_math is not None:
+        print(demerit_calc(int(args.review_math.split()[0]), int(args.review_math.split()[1])))
+    elif args.reset_lcore is not None:
+        reset_lcore()
 
 if __name__ == '__main__':
     main()

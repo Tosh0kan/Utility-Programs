@@ -1,3 +1,4 @@
+import os
 import httpx
 import asyncio
 import argparse
@@ -108,11 +109,11 @@ def scrape_and_proc(url: str, path: str, custom_title: str = None,
         return chapters
 
     async def chapter_proc(chapter: bs, ch_url: str) -> None:
-        story_title = chapter.find_all('li', class_='h_aW')[2].text
+        story_title = chapter.find_all('h1', class_='_title_2d1pc_26')[0].text
         story_title = title_legality(story_title)
         all_ch_pages = []
         try:
-            page_no = chapter.find_all('a', class_='l_bJ')[-1].text
+            page_no = chapter.find_all('a', class_='_pagination__item_1c9jk_13')[-1].text
 
             for n in range(1, int(page_no) + 1):
                 if n == 1:
@@ -127,7 +128,7 @@ def scrape_and_proc(url: str, path: str, custom_title: str = None,
             tasks = (client.get(url, headers=headers, timeout=timeout) for url in all_ch_pages)
             pages = await asyncio.gather(*tasks)
 
-        pages_texts = [bs(page.text, 'lxml').find('div', class_='aa_ht').prettify() for page in pages]
+        pages_texts = [bs(page.text, 'lxml').find('div', class_='_introduction-wrap_f3hmh_1 _author_page_f3hmh_76 _introduction__text_f3hmh_30 _open_f3hmh_27').prettify() for page in pages]
         text_body = ''.join(pages_texts)
 
         story_title = string_insertion(story_title, prefix=prefix, suffix=suffix,
@@ -175,7 +176,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument('url', help='URL of the story\'s first page.', type=str)
     parser.add_argument('path', help='Folder path to save the file.', type=str,
-                        default=os.getcwd())
+                        nargs='?', default=r"F:\Documents\Igor")
     parser.add_argument('-t', '--custom-title', help='Custom title for the story.', type=str)
     parser.add_argument('-p', '--prefix', help='Adds something to the beggining of the title.'
                         'Auto inputs space after.', type=str)

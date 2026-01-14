@@ -11,7 +11,9 @@ def goddess_format() -> None:
     CAPITAL_PRONOUNS = {'you': 'You', 'you\'re': 'You\'re', 'your': 'Your',
                         'yours': 'Yours', 'yourself': 'Yourself', 'goddess': 'Goddess',
                         'min': 'Min', 'juu': 'Juu', 'minjuu': 'MinJuu',
-                        'soo': 'Soo', 'jin': 'Jin', "soojin": "SooJin"
+                        'soo': 'Soo', 'jin': 'Jin', "soojin": "SooJin",
+                        'her': 'Her', 'hers': 'Hers', 'herself': 'Herself',
+                        'she': 'She',
                         }
 
     title = win32gui.GetWindowText(win32gui.GetForegroundWindow())
