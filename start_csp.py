@@ -10,6 +10,17 @@ def is_admin() -> bool:
     except Exception:
         return False
 
+def run_as_adm() -> bool:
+    script = sys.argv[0]
+    params = ' '.join([f'"{x}"' for x in sys.argv])
+
+    try:
+        ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, f'"{script}" {params}', None, 1)
+        return True
+    except Exception as e:
+        print(f"Failed to elevate privileges: {e}")
+        return False
+
 def start_csp() -> None:
     os.startfile(r"C:\Program Files\CELSYS\CLIP STUDIO 1.5\CLIP STUDIO PAINT\CLIPStudioPaint.exe")
 
@@ -22,7 +33,11 @@ def start_csp() -> None:
     pyautogui.press('enter')
 
 if __name__ == '__main__':
-    if not is_admin():
-        ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
-        sys.exit(0)
-    start_csp()
+    if is_admin():
+        start_csp()
+    else:
+        print("Requesting administrator privileges...")
+        if run_as_adm():
+            print("Please check the new window for the elevated process.")
+        else:
+            print("Failed to get admin rights. The script will exit.")
