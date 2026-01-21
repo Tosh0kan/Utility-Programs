@@ -20,16 +20,27 @@ def goddess_format() -> None:
 
     if 'Discord' in title:
         sleep(0.1)
+        loop_cnt = 0
         while True:
-            file_logo = pyautogui.locateOnScreen('icons.png', confidence=0.9)
-            if file_logo is not None:
-                x, y, w, h = file_logo
+            loop_cnt += 1
+            if loop_cnt == 3:
+                print('Failed to find file logo')
                 break
-        pyautogui.moveTo(x - 50, y + 20)
+            web_logo = pyautogui.locateOnScreen('icons_web.png', confidence=0.7)
+            if web_logo is not None:
+                x, y, w, h = web_logo
+                break
+            app_logo = pyautogui.locateOnScreen('icons_app.png', confidence=0.7)
+            if app_logo is not None:
+                x, y, w, h = app_logo
+                break
+        print('before move')
+        pyautogui.moveTo(x - 100, y + 20)
         sleep(0.2)
         pyautogui.keyUp('ctrl')
         pyautogui.keyUp('shift')
         sleep(0.1)
+        print('hotkey start')
         with pyautogui.hold('ctrl'):
             pyautogui.press('a')
             sleep(0.1)
@@ -46,6 +57,7 @@ def goddess_format() -> None:
             pyautogui.press('v')
 
     else:
+        print('in not discord')
         pass
 
 def wrapper_proccer():
