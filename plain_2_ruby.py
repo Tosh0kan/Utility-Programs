@@ -32,9 +32,11 @@ def plain2ruby(term_list: str):
     return '\n'.join(htmled_list)
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('text', type=str, help='plain text')
-    args = parser.parse_args()
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument('text', type=str, help='plain text')
+    # args = parser.parse_args()
 
-    pyperclip.copy(plain2ruby(args.text))
-    print('The converted text was successfuly copied to the clipboard.')
+    # pyperclip.copy(plain2ruby(args.text))
+    # print('The converted text was successfuly copied to the clipboard.')
+    input_txt = "彼は 政界[せいかい]なのに 有名人[ゆうめいじん]と<b>親[した]しい。</b>"
+    print(plain2ruby(input_txt))
