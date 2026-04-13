@@ -9,16 +9,21 @@ def plain2ruby(term_list: str):
         return '<span class="term">' + plain_chunk + '</span>'
 
     def furiganed_htmler(furiganed_chunk: str) -> str:
-        hrtmled_furigana = furiganed_chunk.replace('[', '<rt>').replace(']', '</rt>')
-        return '<span class="term"><ruby>' + hrtmled_furigana + '</ruby></span>'
+        htmled_furigana = furiganed_chunk.replace('[', '<rt>').replace(']', '</rt>')
+        return '<span class="term"><ruby>' + htmled_furigana + '</ruby></span>'
 
     def bolded_htmler(bolded_chunk: str) -> str:
-        return '<span class="term"><b>' + bolded_chunk + '</b></span>'
+        if '[' not in bolded_chunk:
+            return '<span class="term">' + bolded_chunk + '</span>'
+        else:
+            htmled_furigana = bolded_chunk.replace('[', '<rt>').replace(']', '</rt>')
+            htmled_furigana = htmled_furigana.replace('<b>', '').replace('</b>', '')
+            return '<span class="term"><b><ruby>' + htmled_furigana + '</ruby></b></span>'
 
     split_txt = [e for e in re.split(r'\s+|(\w+\[\w+\])|(\w+)|(<b>.*</b>)', term_list) if e != '' and e is not None]
     htmled_list = []
     for e in split_txt:
-        if '[' in e:
+        if '[' in e and '<b>' not in e:
             htmled_list.append(furiganed_htmler(e))
         elif '<b>' in e:
             htmled_list.append(bolded_htmler(e))
@@ -27,9 +32,11 @@ def plain2ruby(term_list: str):
     return '\n'.join(htmled_list)
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('text', type=str, help='plain text')
-    args = parser.parse_args()
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument('text', type=str, help='plain text')
+    # args = parser.parse_args()
 
-    pyperclip.copy(plain2ruby(args.text))
-    print('The converted text was successfuly copied to the clipboard.')
+    # pyperclip.copy(plain2ruby(args.text))
+    # print('The converted text was successfuly copied to the clipboard.')
+    input_txt = "彼は 政界[せいかい]なのに 有名人[ゆうめいじん]と<b>親[した]しい。</b>"
+    print(plain2ruby(input_txt))
