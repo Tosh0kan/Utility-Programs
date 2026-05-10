@@ -29,7 +29,7 @@ def plain2ruby(term_list: str):
             htmled_list.append(bolded_htmler(e))
         else:
             htmled_list.append(reg_htmler(e))
-    return '\n'.join(htmled_list)
+    return ''.join(htmled_list)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
