@@ -33,8 +33,18 @@ def plain2ruby(term_list: str):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('text', type=str, help='plain text')
+    parser.add_argument('text', type=str, help='plain text', nargs='*')
+    parser.add_argument('-l', '--loop', action='store_true')
     args = parser.parse_args()
 
-    pyperclip.copy(plain2ruby(args.text))
-    print('The converted text was successfuly copied to the clipboard.')
+    if args.loop:
+        while True:
+            pln_txt = input("Enter plain text: ")
+            if pln_txt == 'q':
+                break
+            else:
+                pyperclip.copy(plain2ruby(pln_txt))
+                print('The converted text was successfuly copied to the clipboard.')
+    else:
+        pyperclip.copy(plain2ruby(args.text))
+        print('The converted text was successfuly copied to the clipboard.')
