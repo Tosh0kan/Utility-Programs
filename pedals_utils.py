@@ -1,6 +1,7 @@
 import os
 import sys
-import argparse 
+import math
+import argparse
 
 from PySide6.QtCore import (
     QSize,
@@ -42,14 +43,18 @@ def si_conv (s_value:float, s_prefix: str, t_prefix: str) -> float:
     return float(f"{raw_result:.15g}")
 
 
+def gfq(cu: float, cl: float, ru: float, rl: float, re:float) -> tuple[float, float, float]:
+    g = 20 * math.log((ru+re) / ru, 10)
+    f = 1 / (2 * math.pi * math.sqrt(cu * cl * ru * rl))
+    q = math.sqrt((cl * rl / (cu * ru)))
+    return g, f, q
+
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument('s_value', type=float)
-    parser.add_argument('s_prefix', type=str, default='none')
-    parser.add_argument('t_prefix', type=str, default='none')
-    parser.add_argument('-g', '--gui', action='store_true')
+    parser.add_argument('-si', '--si_conversion', nargs='+')
+    parser.add_argument('-g', '--gyrator', nargs='+')
+    parser.add_argument('--gui', action='store_true')
     args = parser.parse_args()
-    print(args.s_value, args.s_prefix, args.t_prefix)
 
     if args.gui:
         app = QApplication(sys.argv)
@@ -58,7 +63,13 @@ def main() -> None:
         app.exec()
 
     else:
-        print(f"{si_conv(args.s_value, args.s_prefix, args.t_prefix)} {args.t_prefix}")
+        if args.si_conversion is not None:
+            s_value, s_prefix, t_prefix = args.si_conversion
+            print(f"{si_conv(s_value, s_prefix, t_prefix)} {t_prefix}")
+
+        elif args.gyrator is not None:
+            cu, cl, ru, rl, re = args.gyrator
+            print(f"{gfq(float(cu), float(cl), float(ru), float(rl), float(re))}")
 
 
 if __name__ == '__main__':
