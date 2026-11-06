@@ -192,7 +192,8 @@ def main():
     elif args.reset_lcore is not None:
         reset_lcore()
     elif args.weblio is not None:
-        weblify(args.weblio)
+        pyperclip.copy(weblify(args.weblio))
+        print("Procced text sent to clipboard!")
 
 if __name__ == '__main__':
     main()
