@@ -124,6 +124,13 @@ def reset_lcore() -> None:
     sleep(2)
     pyautogui.click(1655, 368)
 
+def weblify(terms:str) -> str:
+    term_list = terms.split('\n')
+    while '' in term_list:
+        term_list.remove('')
+
+    weblio_url_list = [r'https://www.weblio.jp/content/' + e for e in term_list]
+    return '\n'.join(weblio_url_list)
 
 def main():
     parser = argparse.ArgumentParser()
@@ -145,6 +152,7 @@ def main():
     parser.add_argument('-r', '--review-math', default=None, help='Calculates total demerits.')
     parser.add_argument('-rl', '--reset-lcore', action='store_true', default=None,
                         help='Resets Logitech Gaming Utility.')
+    parser.add_argument('-wb', '--weblio', type=str, default=None, help='Adds the weblio URL to a list of terms')
 
     args = parser.parse_args()
     if args.meme_text is not None:
@@ -183,6 +191,8 @@ def main():
         print(demerit_calc(int(args.review_math.split()[0]), int(args.review_math.split()[1])))
     elif args.reset_lcore is not None:
         reset_lcore()
+    elif args.weblio is not None:
+        weblify(args.weblio)
 
 if __name__ == '__main__':
     main()
